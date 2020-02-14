@@ -49,23 +49,35 @@ Group.prototype = Array;
 Array.prototype.attendance = function(student) {
   let groupScedule = [];
   for(let i = 0; i < this.length; i++){
-    if (student === this[i].lastName){
-      console.log(groupScedule[i] = this[i].scedule);
-      // return this[i].scedule;
-      return `${this[i].lastName} ${i + 1}й в рейтинге посещяемости`
-    }
-    groupScedule[i] = this[i].scedule;
+    groupScedule.push(this[i].scedule);    
   }
-  let result = groupScedule.map(el => el[0]).filter(el => el === true).length;
-  return `Средняя посещяемость группы ${Math.floor(result)} человек`;
+  for(let i = 0; i < this.length; i++){
+  if (student === this[i].lastName){
+      let rate = groupScedule.map(el => el.filter(el => el === true).length).sort().reverse();
+      let person = groupScedule[i].filter(el => el === true).length;
+      return `${this[i].lastName} ${rate.indexOf(person) + 1}й в рейтинге посещяемости`
+    }
+  }
+  let lessons = groupScedule
+      .map(el => el.filter(el => el === true || el === false).length)
+      .reduce((acc, curr) => acc + curr);
+  let visited = groupScedule
+      .map(el => el.filter(el => el === true).length)
+      .reduce((acc, curr) => acc + curr);;
+  let middle = visited / lessons;
+  return `Средняя посещяемость группы ${Math.floor(middle * 100)}%`;
 }
 Array.prototype.performance = function(student) {
   let groupMarks = [];
   for(let i = 0; i < this.length; i++){
+    groupMarks.push(this[i].marks);    
+  }
+  for(let i = 0; i < this.length; i++){
     if (student === this[i].lastName){
-      return this[i].marks;
+      let rate = groupMarks.map(el => el.reduce((acc, curr) => acc + curr)).sort().reverse();
+      let person = groupMarks[i].reduce((acc, curr) => acc + curr);
+      return `${this[i].lastName} ${rate.indexOf(person) + 1}й в рейтинге оценок`
     }
-    groupMarks[i] = this[i].marks;
   }
   let result = Math.floor(groupMarks
     .map(el => el.reduce((acc, curr) => acc + curr) / el.length)
